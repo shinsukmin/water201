@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 a.tcest
+=======
+a.tecst
+>>>>>>> c5e339555bc43d4ba9b750c3c22b5c3f26ca64b0
