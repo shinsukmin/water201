@@ -151,8 +151,6 @@ def trainNetwork(s, readout, h_fc1, sess):
 
         ret, x_t1 = cv2.threshold(x_t1, 1, 255, cv2.THRESH_BINARY)
 
-        cv2.imshow("test", x_t1)
-
         x_t1 = np.reshape(x_t1, (80, 80, 1))
         #s_t1 = np.append(x_t1, s_t[:,:,1:], axis = 2)
         s_t1 = np.append(x_t1, s_t[:, :, :3], axis=2)
@@ -184,7 +182,12 @@ def trainNetwork(s, readout, h_fc1, sess):
                     y_batch.append(r_batch[i] + GAMMA * np.max(readout_j1_batch[i]))
 
             # perform gradient step
-            train_step.run(feed_dict = {
+            # train_step.run(feed_dict = {
+            #     y : y_batch,
+            #     a : a_batch,
+            #     s : s_j_batch}
+            # )
+            sess.run(train_step, feed_dict = {
                 y : y_batch,
                 a : a_batch,
                 s : s_j_batch}
