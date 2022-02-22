@@ -12,6 +12,7 @@ import random
 from DQN import DQN
 sys.path.append("game/")
 import numpy as np
+import matplotlib.pyplot as plt
 
 def get_copy_var_ops(dest_scope_name="target", src_scope_name="main"):
     op_holder = []
@@ -33,7 +34,7 @@ epsilon_decay = 0.999
 epsilon_min = 0.01
 batch_size = 64
 train_start = 200
-memory = deque(maxlen=4000)
+memory = deque(maxlen=2000)
 
 sess = tf.InteractiveSession()
 mainDQN = DQN(sess, "main", state_size, action_size)
@@ -121,5 +122,12 @@ def playGame():
                     score_avg = 0.9 * score_avg + 0.1 * score
                 
                 print('episode: {:3d} | score avg {:3.2f} | memory length: {:4d} | epsilon: {:.4f}'.format(e, score_avg, len(memory), epsilon))
+
+                scores.append(score_avg)
+                episodes.append(e)
+                plt.plot(episodes, scores, 'b')
+                plt.xlabel('episode')
+                plt.ylabel('average score')
+                plt.savefig('cartpole_graph.png')
     
 playGame()

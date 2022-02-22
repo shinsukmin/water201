@@ -53,14 +53,14 @@ class DQN():
             # Layer1 = tf.nn.relu(tf.matmul(self._X, W1))
 
             W2 = tf.Variable(tf.truncated_normal([64, 32], stddev = 0.01), name = "w2")
-            # b2 = tf.Variable(tf.constant(0.01, shape = [32]), name = "b2")
-            # Layer2 = tf.nn.relu(tf.matmul(Layer1, W2) + b2)
-            Layer2 = tf.nn.relu(tf.matmul(Layer1, W2))
+            b2 = tf.Variable(tf.truncated_normal(shape = [32]), name = "b2")
+            Layer2 = tf.nn.relu(tf.matmul(Layer1, W2) + b2)
+            # Layer2 = tf.nn.relu(tf.matmul(Layer1, W2))
 
             W3 = tf.Variable(tf.truncated_normal([32, 16], stddev = 0.01), name = "w3")
-            b3 = tf.Variable(tf.constant(0.01, shape = [16]), name = "b3")
-            # Layer3 = tf.nn.relu(tf.matmul(Layer2, W3) + b3)
-            Layer3 = tf.nn.relu(tf.matmul(Layer2, W3))
+            b3 = tf.Variable(tf.truncated_normal(shape = [16]), name = "b3")
+            Layer3 = tf.nn.relu(tf.matmul(Layer2, W3) + b3)
+            # Layer3 = tf.nn.relu(tf.matmul(Layer2, W3))
 
             W4 = tf.Variable(tf.truncated_normal([16, self.output_size], stddev = 0.01), name = "w4")
             self._QPred = tf.matmul(Layer3, W4)
