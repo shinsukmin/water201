@@ -48,8 +48,8 @@ class DQN():
             self._X = tf.placeholder(tf.float32, [None, self.input_size], name="input_x")
         
             W1 = tf.Variable(tf.truncated_normal([self.input_size, 64], stddev = 0.01), name = "w1")
-            b1 = tf.Variable(tf.constant(0.01, shape = [64]), name = "b1")
-            Layer1 = tf.nn.relu(tf.matmul(self._X, W1) + b1)
+            b1 = tf.Variable(tf.truncated_normal(shape = [64]), name = "b1")
+            Layer1 = tf.nn.tanh(tf.matmul(self._X, W1) + b1)
             # Layer1 = tf.nn.relu(tf.matmul(self._X, W1))
 
             W2 = tf.Variable(tf.truncated_normal([64, 32], stddev = 0.01), name = "w2")
@@ -63,7 +63,7 @@ class DQN():
             Layer3 = tf.nn.relu(tf.matmul(Layer2, W3))
 
             W4 = tf.Variable(tf.truncated_normal([16, self.output_size], stddev = 0.01), name = "w4")
-            self._QPred = tf.nn.relu(tf.matmul(Layer3, W4))
+            self._QPred = tf.matmul(Layer3, W4)
 
             self._Y = tf.placeholder(tf.float32, shape=[None], name="_Y")
             self._A = tf.placeholder(tf.float32, [None, self.output_size], name="_A")
@@ -82,7 +82,7 @@ class DQN():
         
 
     def update(self, s_batch, r_batch, a_batch):
-        return self.sess.run(self._train, feed_dict={self._X: s_batch, self._Y: r_batch, self._A: a_batch})
+        return self.sess.run([self._loss, self._train], feed_dict={self._X: s_batch, self._Y: r_batch, self._A: a_batch})
 
 
 

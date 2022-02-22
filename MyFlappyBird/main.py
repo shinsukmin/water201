@@ -13,22 +13,35 @@ from DQN import DQN
 sys.path.append("game/")
 import numpy as np
 
+def get_copy_var_ops(dest_scope_name="target", src_scope_name="main"):
+    op_holder = []
+
+    src_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=src_scope_name)
+    dest_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=dest_scope_name)
+
+    for src_var, dest_var in zip(src_vars, dest_vars):
+        op_holder.append(dest_var.assign(src_var.value()))
+    return op_holder
+
 env = gym.make('CartPole-v1')
 state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
 discount_factor = 0.99
-epsilon = 0.1
+epsilon = 0.4
 epsilon_decay = 0.999
-epsilon_min = 0.001
+epsilon_min = 0.01
 batch_size = 64
 train_start = 200
 memory = deque(maxlen=4000)
 
 sess = tf.InteractiveSession()
 mainDQN = DQN(sess, "main", state_size, action_size)
+targetDQN = DQN(sess, "target", state_size, action_size)
 
 sess.run(tf.initialize_all_variables())
+
+copy_ops = get_copy_var_ops(dest_scope_name="target", src_scope_name="main")
 
 def choose_action(state):
     if (np.random.rand() <= epsilon):
@@ -48,14 +61,13 @@ def trainModel():
     r_stack = []
     a_batch = []
     
-    
     mini_batch = random.sample(memory, batch_size)
 
     for state, action, reward, next_state, done in mini_batch:
         if done:
             r_stack.append(reward)
         else:
-            r_stack.append(reward + discount_factor * np.max(mainDQN.predict(next_state)))
+            r_stack.append(reward + discount_factor * np.max(targetDQN.predict(next_state)))
 
         s_batch.append(state)
         a_onehot = [0, 0]
@@ -63,6 +75,7 @@ def trainModel():
         a_batch.append(a_onehot)
 
     return mainDQN.update(s_batch, r_stack, a_batch)
+
 
 
 def playGame():
@@ -95,11 +108,13 @@ def playGame():
 
             remember(state, action, reward, next_state, done)
             if len(memory) >= train_start:
-                trainModel()
+                loss, _ = trainModel()
+                # print('loss: {}', loss)
 
             state = next_state
 
             if done:
+                sess.run(copy_ops)
                 if score_avg == 0:
                     score_avg = score
                 else:
