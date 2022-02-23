@@ -49,7 +49,7 @@ class DQN():
         
             W1 = tf.Variable(tf.truncated_normal([self.input_size, 64], stddev = 0.01), name = "w1")
             b1 = tf.Variable(tf.truncated_normal(shape = [64]), name = "b1")
-            Layer1 = tf.nn.relu(tf.matmul(self._X, W1) + b1)
+            Layer1 = tf.nn.tanh(tf.matmul(self._X, W1) + b1)
             # Layer1 = tf.nn.relu(tf.matmul(self._X, W1))
 
             W2 = tf.Variable(tf.truncated_normal([64, 32], stddev = 0.01), name = "w2")

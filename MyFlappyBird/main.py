@@ -34,7 +34,7 @@ print('State shape: ', env.observation_space.shape)
 print('Number of actions: ', env.action_space.n)
 
 discount_factor = 0.99
-epsilon = 0.01
+epsilon = 0.05
 epsilon_decay = 0.999
 epsilon_min = 0.0005
 batch_size = 64
