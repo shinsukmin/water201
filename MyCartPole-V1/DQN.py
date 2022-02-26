@@ -3,7 +3,8 @@
 # 
 # 
 # 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import numpy as np
 
 GAME = 'bird' # the name of the game being played for log files
